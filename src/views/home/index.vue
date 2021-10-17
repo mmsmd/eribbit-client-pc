@@ -1,11 +1,10 @@
 <template>
-  <!-- 一级路由 -->
-  <router-view></router-view>
+  <div>首页内容</div>
 </template>
 
 <script>
 export default {
-  name: 'App'
+  name: 'HomePage'
 }
 </script>
 
