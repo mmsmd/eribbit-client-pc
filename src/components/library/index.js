@@ -4,11 +4,14 @@
 
 import XtxSkeleton from './xtx-skeleton.vue'
 import XtxCarousel from './xtx-carousel.vue'
+import XtxMore from './xtx-more.vue'
+
 export default {
   install(app) {
     // 在app上进行扩展，app提供component directive
     // 如果要挂在原型，app.config.globalProperties.$http
     app.component(XtxSkeleton.name, XtxSkeleton)
     app.component(XtxCarousel.name, XtxCarousel)
+    app.component(XtxMore.name, XtxMore)
   }
 }
