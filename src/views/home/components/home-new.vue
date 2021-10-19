@@ -2,16 +2,21 @@
   <div class="home-new">
     <HomePanel title="新鲜好物" subTitle="新鲜出炉，品质靠谱">
       <template #right><XtxMore path="/"></XtxMore></template>
-      <!-- 面板内容 -->
-      <ul class="goods-list">
-        <li v-for="item in goods" :key="item.id">
-          <RouterLink :to="`/product/${item.id}`">
-            <img :src="item.picture" alt="" />
-            <p class="name ellipsis">{{ item.name }}</p>
-            <p class="price">&yen;{{ item.price }}</p>
-          </RouterLink>
-        </li>
-      </ul>
+      <div ref="target" style="position: relative;height: 426px;">
+        <!-- 面板内容 -->
+        <Transition name="fade">
+          <ul v-if="goods.length" class="goods-list">
+            <li v-for="item in goods" :key="item.id">
+              <RouterLink :to="`/product/${item.id}`">
+                <img :src="item.picture" alt="" />
+                <p class="name ellipsis">{{ item.name }}</p>
+                <p class="price">&yen;{{ item.price }}</p>
+              </RouterLink>
+            </li>
+          </ul>
+          <HomeSkeleton bg="#f0f9f4" v-else></HomeSkeleton>
+        </Transition>
+      </div>
     </HomePanel>
   </div>
 </template>
@@ -19,18 +24,24 @@
 <script>
 import { ref } from 'vue'
 import HomePanel from './home-panel.vue'
+import HomeSkeleton from './home-skeleton.vue'
 import { findNew } from '@/api/home.js'
+import { useLazyData } from '@/hooks/index.js'
 export default {
   name: 'HomeNew',
   components: {
-    HomePanel
+    HomePanel,
+    HomeSkeleton
   },
   setup() {
-    const goods = ref([])
-    findNew().then(data => {
-      goods.value = data.result
-    })
-    return { goods }
+    // const goods = ref([])
+    // findNew().then(data => {
+    //   goods.value = data.result
+    // })
+    const target = ref(null)
+    const result = useLazyData(target, findNew)
+    console.log(result)
+    return { goods: result, target }
   }
 }
 </script>
