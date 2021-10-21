@@ -33,3 +33,19 @@ export const findNew = () => {
 export const findHot = () => {
   return request('/home/hot', 'get')
 }
+
+/**
+ *获取首页产品
+ * @returns Promise
+ */
+export const findGoods = () => {
+  return request('/home/goods', 'get')
+}
+
+/**
+ *获取最新专题
+ * @returns Promise
+ */
+export const findSpecil = () => {
+  return request('/home/special', 'get')
+}

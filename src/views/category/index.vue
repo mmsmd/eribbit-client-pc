@@ -1,5 +1,13 @@
 <template>
-  <div class="top-category">TopCategory</div>
+  <div class="top-category">
+    <div class="container">
+      <!-- 面包屑 -->
+      1
+      <!-- 轮播图 -->
+      <!-- 全部分类 -->
+      <!-- 各个分类推荐商品 -->
+    </div>
+  </div>
 </template>
 
 <script>

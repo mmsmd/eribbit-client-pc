@@ -6,8 +6,9 @@ import { ref } from 'vue'
  * @param {Element} target - DOM对象
  * @param {Function} apiFn - API函数
  */
-export const useLazyData = (target, apiFn) => {
+export const useLazyData = apiFn => {
   const result = ref([])
+  const target = ref(null)
   // stop 停止观察是否进入或移出可视区域的行为
   const { stop } = useIntersectionObserver(
     // target 是观察的目标dom容器，必须是dom容器，而且是vue3.0方式绑定的dom对象
@@ -21,11 +22,14 @@ export const useLazyData = (target, apiFn) => {
         // 调用api函数，获取数据
 
         apiFn().then(data => {
-          console.log(result)
           result.value = data.result
         })
       }
+    },
+    // 配置选项 只要相交的比例大于0，就触发
+    {
+      threshold: 0
     }
   )
-  return result
+  return { result, target }
 }
