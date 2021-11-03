@@ -116,3 +116,22 @@ ul {
     }
   }
 }
+
+// 面包屑动画
+// 进入：右侧20px位移 透明度为0 过度0.5s 原位置 无位移 透明度1
+// 离开：原位置 无位移透明度1 过度0.5s 右侧 20px位移 透明度0
+
+.fade-right-enter-from,
+.fade-right-leave-to {
+  transform: translateX(20px);
+  opacity: 0;
+}
+.fade-right-enter-active,
+.fade-right-leave-active {
+  transition: all 0.5s;
+}
+.fade-right-enter-to,
+.fade-right-leave-from {
+  transform: none;
+  opacity: 1;
+}
