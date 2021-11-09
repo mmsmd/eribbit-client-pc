@@ -1,12 +1,11 @@
 <template>
-  <!-- 筛选区 -->
   <div class="sub-filter" v-if="filterData && !filterLoading">
     <div class="item">
       <div class="head">品牌：</div>
       <div class="body">
         <a
-          @click="filterData.brands.selectedBrand = item.id"
-          :class="{ active: item.id === filterData.brands.selectedBrand }"
+          @click="changeBrand(item.id)"
+          :class="{ active: item.id === filterData.selectedBrand }"
           href="javascript:;"
           v-for="item in filterData.brands"
           :key="item.id"
@@ -18,7 +17,7 @@
       <div class="head">{{ item.name }}：</div>
       <div class="body">
         <a
-          @click="item.selectedProp = prop.id"
+          @click="changeProp(item, prop.id)"
           :class="{ active: prop.id === item.selectedProp }"
           href="javascript:;"
           v-for="prop in item.properties"
@@ -28,7 +27,6 @@
       </div>
     </div>
   </div>
-  <!-- 骨架  -->
   <div v-else class="sub-filter">
     <XtxSkeleton class="item" width="800px" height="40px" />
     <XtxSkeleton class="item" width="800px" height="40px" />
@@ -40,28 +38,29 @@
 <script>
 import { ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { findSubCategoryFilter } from '@/api/category.js'
+import { findSubCategoryFilter } from '@/api/category'
 export default {
   name: 'SubFilter',
-  setup() {
+  setup(props, { emit }) {
     const route = useRoute()
     const filterLoading = ref(false)
-    // 监听二级类目id的变化，获取筛选数据
+    // 监听二级类目ID的变化获取筛选数据
     const filterData = ref(null)
+
     watch(
       () => route.params.id,
       newVal => {
-        // 变化后id有值，且 处在 二级类目 路由下
+        // 变化后的ID有值 且 处在二级类名路由下
         if (newVal && `/category/sub/${newVal}` === route.path) {
           filterLoading.value = true
           // 发请求获取数据
           findSubCategoryFilter(route.params.id).then(data => {
-            // 每组筛选条件 需要追加一个 全部 条件
-            // 给每一组数据加上选中的ID
-            // 1.品牌
-            data.result.brands.selectedBrand = null
+            // 每一组可选的筛选条件缺失 全部 条件，处理下数据加上全部
+            // 给每一组数据加上一个选中的ID
+            // 1. 品牌
+            data.result.selectedBrand = null
             data.result.brands.unshift({ id: null, name: '全部' })
-            // 2.属性
+            // 2. 属性
             data.result.saleProperties.forEach(item => {
               item.selectedProp = null
               item.properties.unshift({ id: null, name: '全部' })
@@ -74,7 +73,38 @@ export default {
       },
       { immediate: true }
     )
-    return { filterData, filterLoading }
+
+    // 获取筛选参数的函数
+    const getFilterParams = () => {
+      const obj = { brandId: null, attrs: [] }
+      // 品牌
+      obj.brandId = filterData.value.selectedBrand
+      // 销售属性
+      filterData.value.saleProperties.forEach(item => {
+        if (item.selectedProp) {
+          const prop = item.properties.find(prop => prop.id === item.selectedProp)
+          obj.attrs.push({ groupName: item.name, propertyName: prop.name })
+        }
+      })
+      // 参考数据：{brandId:'',attrs:[{groupName:'',propertyName:''},...]}
+      if (obj.attrs.length === 0) obj.attrs = null
+      return obj
+    }
+
+    // 1. 记录当前选择的品牌
+    const changeBrand = brandId => {
+      if (filterData.value.selectedBrand === brandId) return
+      filterData.value.selectedBrand = brandId
+      emit('filter-change', getFilterParams())
+    }
+    // 2. 记录呢选择的销售属性
+    const changeProp = (item, propId) => {
+      if (item.selectedProp === propId) return
+      item.selectedProp = propId
+      emit('filter-change', getFilterParams())
+    }
+
+    return { filterData, filterLoading, changeBrand, changeProp }
   }
 }
 </script>
