@@ -4,6 +4,7 @@ const Layout = () => import('@/views/Layout.vue')
 const Home = () => import('@/views/home/index.vue')
 const TopCategory = () => import('@/views/category/index.vue')
 const SubCategory = () => import('@/views/category/sub.vue')
+const Goods = () => import('@/views/goods/index.vue')
 
 const routes = [
   //  一级路由布局容器
@@ -13,7 +14,8 @@ const routes = [
     children: [
       { path: '/', component: Home },
       { path: '/category/:id', component: TopCategory },
-      { path: '/category/sub/:id', component: SubCategory }
+      { path: '/category/sub/:id', component: SubCategory },
+      { path: '/product/:id', component: Goods }
     ]
   }
 ]

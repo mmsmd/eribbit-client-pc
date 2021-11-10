@@ -33,7 +33,6 @@ export default {
       target,
       ([{ isIntersecting }]) => {
         if (isIntersecting) {
-          console.log('进入可视区')
           // 触发加载事件条件：请求加载完成，数据未加载完毕
           if (!props.loading && !props.finished) {
             emit('infinite')
