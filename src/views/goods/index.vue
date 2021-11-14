@@ -57,7 +57,12 @@ export default {
     // 1.获取商品详情，进行渲染
     const goods = useGoods()
     const changeSku = sku => {
-      console.log(sku)
+      // 修改商品的 现价 原价 库存信息
+      if (sku.skuId) {
+        goods.value.price = sku.price
+        goods.value.oldPrice = sku.oldPrice
+        goods.value.inventory = sku.inventory
+      }
     }
     return { goods, changeSku }
   }
