@@ -10,7 +10,7 @@
 <script>
 import GoodsItem from '@/views/category/components/goods-item.vue'
 import { computed } from 'vue-demi'
-import { findGoodsHot } from '../../../api/product.js'
+import { findGoodsHot } from '@/api/product.js'
 import { ref } from 'vue'
 import { useRoute } from 'vue-router'
 export default {

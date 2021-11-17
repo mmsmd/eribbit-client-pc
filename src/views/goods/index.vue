@@ -152,9 +152,9 @@ const useGoods = () => {
 //   min-height: 600px;
 //   background: #fff;
 // }
-.goods-warn {
-  min-height: 600px;
-  background: #fff;
-  margin-top: 20px;
-}
+// .goods-warn {
+//   min-height: 600px;
+//   background: #fff;
+//   margin-top: 20px;
+// }
 </style>

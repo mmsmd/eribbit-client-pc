@@ -27,3 +27,13 @@ export const findRelevantGoods = ({ id, limit = 16 }) => {
 export const findGoodsHot = ({ id, limit = 3, type = 1 }) => {
   return request('/goods/hot', 'get', { id, limit, type })
 }
+
+/**
+ * 查询商品评价信息
+ * @param {string} id - 商品ID
+ * @returns
+ */
+export const findGoodsCommentInfo = id => {
+  // axios遇到http,https开头的地址，不会加上基准地址
+  return request(`https://mock.boxuegu.com/mock/1175/goods/${id}/evaluate`, 'get')
+}
