@@ -30,10 +30,20 @@ export const findGoodsHot = ({ id, limit = 3, type = 1 }) => {
 
 /**
  * 查询商品评价信息
- * @param {string} id - 商品ID
+ * @param {String} id - 商品ID
  * @returns
  */
 export const findGoodsCommentInfo = id => {
   // axios遇到http,https开头的地址，不会加上基准地址
   return request(`https://mock.boxuegu.com/mock/1175/goods/${id}/evaluate`, 'get')
+}
+
+/**
+ * 查询商品评价列表
+ * @param {String} id - 商品ID
+ * @param {Object} params - 筛选条件
+ * @returns
+ */
+export const findGoodsCommentList = (id, params) => {
+  return request(`https://mock.boxuegu.com/mock/1175/goods/${id}/evaluate/page`, 'get', params)
 }
