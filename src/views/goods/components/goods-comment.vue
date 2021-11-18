@@ -49,7 +49,7 @@
     </div>
     <!-- 评价列表 -->
     <div class="list" v-if="commentList">
-      <div class="item" v-for="item in commentList" :key="(item, id)">
+      <div class="item" v-for="item in commentList" :key="item.id">
         <div class="user">
           <img :src="item.member.avatar" alt="" />
           <span>{{ formatNickname(item.member.nickname) }}</span>
