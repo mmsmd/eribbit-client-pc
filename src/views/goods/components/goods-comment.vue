@@ -73,6 +73,8 @@
         </div>
       </div>
     </div>
+    <!-- 分页组件 -->
+    <XtxPagination></XtxPagination>
   </div>
 </template>
 
