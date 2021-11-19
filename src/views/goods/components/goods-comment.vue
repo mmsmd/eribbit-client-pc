@@ -26,7 +26,7 @@
         </div>
       </div>
     </div>
-    <div class="sort">
+    <div class="sort" v-if="commentInfo">
       <span>排序：</span>
       <a
         @click="changeSort(null)"
@@ -74,7 +74,13 @@
       </div>
     </div>
     <!-- 分页组件 -->
-    <XtxPagination></XtxPagination>
+    <XtxPagination
+      v-if="total"
+      @current-change="changePagerFn"
+      :total="total"
+      :page-size="reqParams.pageSize"
+      :current-page="reqParams.page"
+    ></XtxPagination>
   </div>
 </template>
 
@@ -146,11 +152,13 @@ export default {
 
     // 初始化需要发请求，筛选条件发生改变发请求
     const commentList = ref([])
+    const total = ref(0)
     watch(
       reqParams,
       () => {
-        findGoodsCommentList(goods.id, reqParams).then(data => {
+        findGoodsCommentList(goods.value.id, reqParams).then(data => {
           commentList.value = data.result.items
+          total.value = data.result.counts
         })
       },
       { immediate: true }
@@ -163,6 +171,12 @@ export default {
     const formatNickname = nickname => {
       return nickname.substr(0, 1) + '****' + nickname.substr(-1)
     }
+
+    // 实现分页数据切换
+    const changePagerFn = newPage => {
+      reqParams.page = newPage
+    }
+
     return {
       commentInfo,
       currentTagIndex,
@@ -171,7 +185,9 @@ export default {
       commentList,
       changeSort,
       formatSpecs,
-      formatNickname
+      formatNickname,
+      total,
+      changePagerFn
     }
   }
 }

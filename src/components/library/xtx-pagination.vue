@@ -1,21 +1,47 @@
 <template>
   <div class="xtx-pagination">
-    <a href="javascript:;" class="disabled">上一页</a>
-    <span>...</span>
-    <a href="javascript:;">3</a>
-    <a href="javascript:;">4</a>
-    <a href="javascript:;" class="active">5</a>
-    <a href="javascript:;">6</a>
-    <a href="javascript:;">7</a>
-    <span>...</span>
-    <a href="javascript:;">下一页</a>
+    <a @click="changePager(myCurrentPage - 1)" v-if="myCurrentPage > 1" href="javascript:;"
+      >上一页</a
+    >
+    <a v-else href="javascript:;" class="disabled">上一页</a>
+    <span v-if="pager.start > 1">...</span>
+    <a
+      href="javascript:;"
+      v-for="i in pager.btnArr"
+      :key="i"
+      :class="{ active: i === myCurrentPage }"
+      @click="changePager(i)"
+      >{{ i }}</a
+    >
+    <span v-if="pager.end < pager.pageCount">...</span>
+    <a
+      @click="changePager(myCurrentPage + 1)"
+      v-if="myCurrentPage < pager.pageCount"
+      href="javascript:;"
+      >下一页</a
+    >
+    <a v-else href="javascript:;" class="disabled">下一页</a>
   </div>
 </template>
 <script>
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 export default {
   name: 'XtxPagination',
-  setup() {
+  props: {
+    total: {
+      type: Number,
+      default: 100
+    },
+    pageSize: {
+      type: Number,
+      default: 10
+    },
+    currentPage: {
+      type: Number,
+      default: 1
+    }
+  },
+  setup(props, { emit }) {
     // 需要数据
     // 1. 约定按钮个数为 5 个,如果成为动态需要设置为响应式数据
     const count = 5
@@ -53,7 +79,25 @@ export default {
       // 提供计算属性数据
       return { pageCount, start, end, btnArr }
     })
-    return { myCurrentPage, pager }
+    // 监听props的变化，更新组件内数据
+    watch(
+      props,
+      () => {
+        myTotal.value = props.total
+        myCurrentPage.value = props.currentPage
+        myPageSize.value = props.pageSize
+      },
+      { immediate: true }
+    )
+
+    // 切换分页函数
+    const changePager = page => {
+      myCurrentPage.value = page
+      // 通知父组件
+      emit('current-change', page)
+    }
+
+    return { myCurrentPage, pager, changePager }
   }
 }
 </script>
