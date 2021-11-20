@@ -17,7 +17,7 @@
         >
       </nav>
       <!-- 账号登录&扫码登录 -->
-      <div v-if="activeName === 'account'" class="account-box">表单</div>
+      <LoginForm v-if="activeName === 'account'">表单</LoginForm>
       <div v-if="activeName === 'qrcode'" class="qrcode-box">
         <img src="@/assets/images/qrcode.jpg" alt="" />
         <p>打开 <a href="javascript:;">小兔鲜App</a> 扫码登录</p>
@@ -31,11 +31,13 @@
 import { ref } from 'vue'
 import LoginHeader from './components/login-header'
 import LoginFooter from './components/login-footer'
+import LoginForm from './components/login-form.vue'
 export default {
   name: 'Login',
   components: {
     LoginHeader,
-    LoginFooter
+    LoginFooter,
+    LoginForm
   },
   setup() {
     const activeName = ref('account')
