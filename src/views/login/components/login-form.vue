@@ -108,6 +108,7 @@
 import { reactive, ref, watch } from 'vue'
 import { Form, Field } from 'vee-validate'
 import schema from '@/utils/vee-validate-schema.js'
+import Message from '@/components/library/Message.js'
 export default {
   name: 'LoginForm',
   components: { Form, Field },
@@ -153,11 +154,16 @@ export default {
       formCom.value.resetForm()
     })
 
+    // setup中获取组件实例 proxy
+    // const { proxy } = getCurrentInstance()
+    // proxy.$message({ text: '11' })
+
     // 需要在点击登录的时候，对整体表单进行校验
     const login = async () => {
       // Form组件提供了一个 validate 函数，做整体表单校验，返回的是一个 Promise
       const valid = await formCom.value.validate()
       console.log(valid)
+      Message({ type: 'success', text: '用户名或密码错误' })
     }
 
     return { isMsgLogin, form, schema: mySchema, login, formCom }
