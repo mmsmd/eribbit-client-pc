@@ -19,3 +19,13 @@ export const userAccountLogin = ({ account, password }) => {
 export const userMobileLoginMsg = mobile => {
   return request('/login/code', 'get', { mobile })
 }
+
+/**
+ * 手机号登录
+ * @param {String} mobile - 手机号
+ * @param {String} code - 短信验证码，默认123456
+ * @returns Promise
+ */
+export const userMobileLogin = ({ mobile, code }) => {
+  return request('/login/code', 'post', { mobile, code })
+}

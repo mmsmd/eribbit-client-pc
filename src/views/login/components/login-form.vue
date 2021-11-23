@@ -111,7 +111,7 @@ import { onUnmounted, reactive, ref, watch } from 'vue'
 import { Form, Field } from 'vee-validate'
 import schema from '@/utils/vee-validate-schema.js'
 import Message from '@/components/library/Message.js'
-import { userAccountLogin, userMobileLoginMsg } from '@/api/user.js'
+import { userAccountLogin, userMobileLoginMsg, userMobileLogin } from '@/api/user.js'
 import { useStore } from 'vuex'
 import { useRouter, useRoute } from 'vue-router'
 import { useIntervalFn } from '@vueuse/core'
@@ -171,43 +171,38 @@ export default {
     const login = async () => {
       // Form组件提供了一个 validate 函数，做整体表单校验，返回的是一个 Promise
       const valid = await formCom.value.validate()
-      // console.log(valid)
-      // Message({ type: 'success', text: '用户名或密码错误' })
       if (valid) {
-        if (isMsgLogin.value) {
-          // **手机号登录
-          // 1. 发送验证码
-          // 1.1 绑定发送验证码按钮点击事件
-          // 1.2 校验手机号，如果校验成功，发送短信(定义API)，请求成功开启60s倒计时，倒计时结束前不能点击，结束后恢复原样
-          // 1.3 校验失败，显示失败的校验样式
-          // 2. 手机号登录
-          // 2.1 准备一个API做手机号登录
-          // 2.2 调用API函数
-          // 2.3 成功；存储用户信息 + 跳转至来源页或者首页 + 消息提示
-          // 2.4 失败：消息提示
-        } else {
-          // **账号登录
-          // 1. 准备一个API做账号登录
-          // 2. 调用API函数
-          // 3. 成功；存储用户信息 + 跳转至来源页或者首页 + 消息提示
-          // 4. 失败：消息提示
-          const { account, password } = form
-          userAccountLogin({ account, password })
-            .then(data => {
-              // 存储用户信息
-              const { id, account, avatar, mobile, nickname, token } = data.result
-              store.commit('user/setUser', { id, account, avatar, mobile, nickname, token })
-              // 2.跳转
-              router.push(route.query.redirectUrl || '/')
-              // 消息提示
-              Message({ type: 'success', text: '登录成功' })
-            })
-            .catch(e => {
-              // 失败提示
-              if (e.response.data) {
-                Message({ type: 'error', text: e.response.data.message || '登录失败' })
-              }
-            })
+        try {
+          let data = null
+          if (isMsgLogin.value) {
+            // **手机号登录
+            // 2.1 准备一个API做手机号登录
+            // 2.2 调用API函数
+            // 2.3 成功；存储用户信息 + 跳转至来源页或者首页 + 消息提示
+            // 2.4 失败：消息提示
+            const { mobile, code } = form
+            data = await userMobileLogin({ mobile, code })
+          } else {
+            // **账号登录
+            // 1. 准备一个API做账号登录
+            // 2. 调用API函数
+            // 3. 成功；存储用户信息 + 跳转至来源页或者首页 + 消息提示
+            // 4. 失败：消息提示
+            const { account, password } = form
+            data = await userAccountLogin({ account, password })
+          }
+          // 存储用户信息
+          const { id, account, avatar, mobile, nickname, token } = data.result
+          store.commit('user/setUser', { id, account, avatar, mobile, nickname, token })
+          // 2.跳转
+          router.push(route.query.redirectUrl || '/')
+          // 消息提示
+          Message({ type: 'success', text: '登录成功' })
+        } catch (e) {
+          // 失败提示
+          if (e.response.data) {
+            Message({ type: 'error', text: e.response.data.message || '登录失败' })
+          }
         }
       }
     }
@@ -229,6 +224,10 @@ export default {
       pause()
     })
 
+    // 1. 发送验证码
+    // 1.1 绑定发送验证码按钮点击事件
+    // 1.2 校验手机号，如果校验成功，发送短信(定义API)，请求成功开启60s倒计时，倒计时结束前不能点击，结束后恢复原样
+    // 1.3 校验失败，显示失败的校验样式
     const send = async () => {
       const valid = mySchema.mobile(form.mobile)
       if (valid === true) {
