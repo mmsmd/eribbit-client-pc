@@ -17,5 +17,12 @@ module.exports = {
       .use('url-loader')
       .loader('url-loader')
       .tap(options => Object.assign(options, { limit: 10000 }))
+    // 开启IP和域名访问权限。
+    config.devServer.disableHostCheck(true)
+  },
+  configureWebpack: {
+    externals: {
+      qc: 'QC'
+    }
   }
 }
