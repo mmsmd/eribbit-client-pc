@@ -17,11 +17,11 @@ export default {
     }
   },
   mutations: {
-    // 修改用户信息,playload就是用户信息对象
+    // 修改用户信息，payload就是用户信息对象
     setUser(state, payload) {
       state.profile = payload
     },
-    // 修改回调地址
+    // 修改回跳地址
     setRedirectUrl(state, url) {
       state.redirectUrl = url
     }
