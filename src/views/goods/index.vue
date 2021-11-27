@@ -25,7 +25,9 @@
           <!-- 数量选择组件 -->
           <XtxNumbox label="数量" v-model="num" :max="goods.inventory"></XtxNumbox>
           <!-- 按钮组件 -->
-          <XtxButton type="primary" style="margin-top:20px">加入购物车</XtxButton>
+          <XtxButton @click="insertCart()" type="primary" style="margin-top:20px"
+            >加入购物车</XtxButton
+          >
         </div>
       </div>
       <!-- 商品推荐 -->
@@ -54,6 +56,7 @@
 
 <script>
 import { nextTick, provide, ref, watch } from 'vue'
+import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
 import { findGoods } from '@/api/product.js'
 import GoodsRelevant from './components/goods-relevant'
@@ -64,6 +67,7 @@ import GoodsSku from './components/goods-sku.vue'
 import GoodsTabs from './components/goods-tabs.vue'
 import GoodsHot from './components/goods-hot.vue'
 import GoodsWarn from './components/goods-warn.vue'
+import Message from '@/components/library/Message.js'
 export default {
   name: 'XtxGoodsPage',
   components: {
@@ -86,6 +90,8 @@ export default {
         goods.value.oldPrice = sku.oldPrice
         goods.value.inventory = sku.inventory
       }
+      // 记录选择后sku，可能有数据，可能没有数据{}
+      currSku.value = sku
     }
 
     // 提供goods数据给后代使用
@@ -93,7 +99,37 @@ export default {
 
     // 选择的数量
     const num = ref(1)
-    return { goods, changeSku, num }
+
+    // 加入购物车
+    const store = useStore()
+    const currSku = ref(null)
+    const insertCart = () => {
+      if (currSku.value && currSku.value.skuId) {
+        const { skuId, specsText: attrsText, inventory: stock } = currSku.value
+        const { id, name, price, mainPictures } = goods.value
+        store
+          .dispatch('cart/insertCart', {
+            skuId,
+            attrsText,
+            stock,
+            id,
+            name,
+            price,
+            nowPrice: price,
+            picture: mainPictures[0],
+            selected: true,
+            isEffective: true,
+            count: num.value
+          })
+          .then(() => {
+            Message({ type: 'success', text: '添加购物车成功' })
+          })
+      } else {
+        Message({ text: '请选择完整规格' })
+      }
+    }
+
+    return { goods, changeSku, num, insertCart }
   }
 }
 // 获取商品详情
