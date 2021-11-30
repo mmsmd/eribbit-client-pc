@@ -9,7 +9,9 @@
         <table>
           <thead>
             <tr>
-              <th width="120"><XtxCheckbox>全选</XtxCheckbox></th>
+              <th width="120">
+                <XtxCheckbox :modelValue="$store.getters['cart/isCheckAll']">全选</XtxCheckbox>
+              </th>
               <th width="400">商品信息</th>
               <th width="220">单价</th>
               <th width="180">数量</th>
@@ -19,29 +21,33 @@
           </thead>
           <!-- 有效商品 -->
           <tbody>
-            <tr v-for="i in 3" :key="i">
-              <td><XtxCheckbox /></td>
+            <tr v-for="goods in $store.getters['cart/validList']" :key="goods.skuId">
+              <td><XtxCheckbox :modelValue="goods.selected" /></td>
               <td>
                 <div class="goods">
-                  <RouterLink to="/"
-                    ><img
-                      src="https://yanxuan-item.nosdn.127.net/13ab302f8f2c954d873f03be36f8fb03.png"
-                      alt=""
+                  <RouterLink :to="`/product/${goods.id}`"
+                    ><img :src="goods.picture" alt=""
                   /></RouterLink>
                   <div>
-                    <p class="name ellipsis">和手足干裂说拜拜 ingrams手足皲裂修复霜</p>
+                    <p class="name ellipsis">{{ goods.name }}</p>
                     <!-- 选择规格组件 -->
                   </div>
                 </div>
               </td>
               <td class="tc">
-                <p>&yen;200.00</p>
-                <p>比加入时降价 <span class="red">&yen;20.00</span></p>
+                <p>&yen;{{ goods.nowPrice }}</p>
+                <p v-if="goods.price - goods.nowPrice > 0">
+                  比加入时降价 <span class="red">&yen;{{ goods.price - goods.nowPrice }}</span>
+                </p>
               </td>
               <td class="tc">
-                <XtxNumbox />
+                <XtxNumbox :modelValue="goods.count" />
               </td>
-              <td class="tc"><p class="f16 red">&yen;200.00</p></td>
+              <td class="tc">
+                <p class="f16 red">
+                  &yen;{{ (Math.round(goods.nowPrice * 100) * goods.count) / 100 }}
+                </p>
+              </td>
               <td class="tc">
                 <p><a href="javascript:;">移入收藏夹</a></p>
                 <p><a class="green" href="javascript:;">删除</a></p>
@@ -50,28 +56,28 @@
             </tr>
           </tbody>
           <!-- 无效商品 -->
-          <tbody>
+          <tbody v-if="$store.getters['cart/invalidList'].length">
             <tr>
               <td colspan="6"><h3 class="tit">失效商品</h3></td>
             </tr>
-            <tr v-for="i in 3" :key="i">
+            <tr v-for="goods in $store.getters['cart/validList']" :key="goods.skuId">
               <td><XtxCheckbox style="color:#eee;" /></td>
               <td>
                 <div class="goods">
-                  <RouterLink to="/"
-                    ><img
-                      src="https://yanxuan-item.nosdn.127.net/13ab302f8f2c954d873f03be36f8fb03.png"
-                      alt=""
-                  /></RouterLink>
+                  <RouterLink to="/"><img :src="goods.picture" alt=""/></RouterLink>
                   <div>
-                    <p class="name ellipsis">和手足干裂说拜拜 ingrams手足皲裂修复霜</p>
-                    <p class="attr">颜色：粉色 尺寸：14cm 产地：中国</p>
+                    <p class="name ellipsis">{{ goods.name }}</p>
+                    <p class="attr">{{ goods.attrsText }}</p>
                   </div>
                 </div>
               </td>
-              <td class="tc"><p>&yen;200.00</p></td>
-              <td class="tc">1</td>
-              <td class="tc"><p>&yen;200.00</p></td>
+              <td class="tc">
+                <p>&yen;{{ goods.nowPrice }}</p>
+              </td>
+              <td class="tc">{{ goods.account }}</td>
+              <td class="tc">
+                <p>&yen;{{ (Math.round(goods.nowPrice * 100) * goods.count) / 100 }}</p>
+              </td>
               <td class="tc">
                 <p><a class="green" href="javascript:;">删除</a></p>
                 <p><a href="javascript:;">找相似</a></p>
@@ -83,14 +89,15 @@
       <!-- 操作栏 -->
       <div class="action">
         <div class="batch">
-          <XtxCheckbox>全选</XtxCheckbox>
+          <XtxCheckbox :modelValue="$store.getters['cart/isCheckAll']">全选</XtxCheckbox>
           <a href="javascript:;">删除商品</a>
           <a href="javascript:;">移入收藏夹</a>
           <a href="javascript:;">清空失效商品</a>
         </div>
         <div class="total">
-          共 7 件商品，已选择 2 件，商品合计：
-          <span class="red">¥400</span>
+          共 {{ $store.getters['cart/validTotal'] }} 件商品，已选择
+          {{ $store.getters['cart/selectedTotal'] }} 件，商品合计：
+          <span class="red">¥{{ $store.getters['cart/selectedAmount'] }}</span>
           <XtxButton type="primary">下单结算</XtxButton>
         </div>
       </div>
