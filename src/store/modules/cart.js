@@ -86,7 +86,6 @@ export default {
           })
           // dataList成功结果的集合，数据顺序和promiseArr顺序一致，它又是根据state.list而来
           Promise.all(promiseArr).then(dataList => {
-            console.log(dataList)
             // 更新本地购物车
             dataList.forEach((data, i) => {
               ctx.commit('updateCart', { skuId: ctx.state.list[i].skuId, ...data.result })

@@ -6,10 +6,10 @@
       <em>{{ $store.getters['cart/validTotal'] }}</em>
     </RouterLink>
     <!-- 购物车弹出层 -->
-    <div class="layer" v-if="$store.getters['cart/validTotal'] > 0 && $router.path !== '/cart'">
+    <div class="layer" v-if="$store.getters['cart/validTotal'] > 0 && $route.path !== '/cart'">
       <div class="list">
         <div class="item" v-for="goods in $store.getters['cart/validList']" :key="goods.skuId">
-          <RouterLink to="">
+          <RouterLink :to="`/product/${goods.id}`">
             <img :src="goods.picture" alt="" />
             <div class="center">
               <p class="name ellipsis-2">{{ goods.name }}</p>
@@ -28,7 +28,7 @@
           <p>共 {{ $store.getters['cart/validTotal'] }} 件商品</p>
           <p>&yen;{{ $store.getters['cart/validAmount'] }}</p>
         </div>
-        <XtxButton type="plain">去购物车结算</XtxButton>
+        <XtxButton @click="$router.push('/cart')" type="plain">去购物车结算</XtxButton>
       </div>
     </div>
   </div>
