@@ -23,6 +23,11 @@
           </thead>
           <!-- 有效商品 -->
           <tbody>
+            <tr v-if="$store.getters['cart/validList'].length === 0">
+              <td colspan="6">
+                <CartNone></CartNone>
+              </td>
+            </tr>
             <tr v-for="goods in $store.getters['cart/validList']" :key="goods.skuId">
               <td>
                 <XtxCheckbox
@@ -57,7 +62,9 @@
               </td>
               <td class="tc">
                 <p><a href="javascript:;">移入收藏夹</a></p>
-                <p><a class="green" href="javascript:;">删除</a></p>
+                <p>
+                  <a @click="deleteCart(goods.skuId)" class="green" href="javascript:;">删除</a>
+                </p>
                 <p><a href="javascript:;">找相似</a></p>
               </td>
             </tr>
@@ -86,7 +93,9 @@
                 <p>&yen;{{ (Math.round(goods.nowPrice * 100) * goods.count) / 100 }}</p>
               </td>
               <td class="tc">
-                <p><a class="green" href="javascript:;">删除</a></p>
+                <p>
+                  <a @click="deleteCart(goods.skuId)" class="green" href="javascript:;">删除</a>
+                </p>
                 <p><a href="javascript:;">找相似</a></p>
               </td>
             </tr>
@@ -118,9 +127,11 @@
 <script>
 import GoodRelevant from '@/views/goods/components/goods-relevant'
 import { useStore } from 'vuex'
+import Message from '@/components/library/Message.js'
+import CartNone from './components/cart-none'
 export default {
   name: 'XtxCartPage',
-  components: { GoodRelevant },
+  components: { GoodRelevant, CartNone },
   setup() {
     const store = useStore()
     // 单选
@@ -131,8 +142,14 @@ export default {
     const checkAll = selected => {
       store.dispatch('cart/checkAllCart', selected)
     }
+    // 删除
+    const deleteCart = skuId => {
+      store.dispatch('cart/deleteCart', skuId).then(() => {
+        Message({ type: 'success', text: '删除成功' })
+      })
+    }
 
-    return { checkOne, checkAll }
+    return { checkOne, checkAll, deleteCart }
   }
 }
 </script>
