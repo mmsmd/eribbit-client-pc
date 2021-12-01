@@ -85,14 +85,27 @@ export default {
     }
   },
   actions: {
-    // 加入购物车
-    insertCart(ctx, payload) {
+    // 修改购物车（选中状态，数量）
+    updateCart(ctx, payload) {
       return new Promise((resolve, reject) => {
         if (ctx.rootState.user.profile.token) {
           // TODO 已登录
         } else {
           // 未登录
-          ctx.commit('insertCart', payload)
+          ctx.commit('updateCart', payload)
+          resolve()
+        }
+      })
+    },
+    // 加入购物车
+    insertCart(ctx, payload) {
+      // payload 需要：skuId（必须），selected ，count（可能）
+      return new Promise((resolve, reject) => {
+        if (ctx.rootState.user.profile.token) {
+          // TODO 已登录
+        } else {
+          // 未登录
+          ctx.commit('updateCart', payload)
           resolve()
         }
       })
