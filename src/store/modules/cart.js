@@ -85,6 +85,26 @@ export default {
     }
   },
   actions: {
+    // 修改规格
+    updateCartSku(ctx, { oldSkuId, newSku }) {
+      return new Promise((resolve, reject) => {
+        if (ctx.rootState.user.profile.token) {
+          // TODO 已登录
+        } else {
+          // 未登录
+          // 1.找出旧的商品信息
+          // 2.删除旧的商品数据
+          // 3.根据新的sku信息和旧的商品信息，合并成一条新的购物车商品数据
+          // 4.添加新的商品
+          const oldGoods = ctx.state.list.find(item => item.skuId === oldSkuId)
+          ctx.commit('deleteCart', oldSkuId)
+          const { skuId, price: nowPrice, specsText: attrsText, inventory: stock } = newSku
+          const newGoods = { ...oldGoods, skuId, nowPrice, attrsText, stock }
+          ctx.commit('insertCart', newGoods)
+          resolve()
+        }
+      })
+    },
     // 批量删除
     batchDeleteCart(ctx, isClear) {
       return new Promise((resolve, reject) => {
