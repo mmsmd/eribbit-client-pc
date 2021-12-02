@@ -86,14 +86,15 @@ export default {
   },
   actions: {
     // 批量删除
-    batchDeleteCart(ctx) {
+    batchDeleteCart(ctx, isClear) {
       return new Promise((resolve, reject) => {
         if (ctx.rootState.user.profile.token) {
           // TODO 已登录
         } else {
           // 未登录
           // 找出选中的商品列表，遍历调用删除的mutations
-          ctx.getters.selectedList.forEach(item => {
+          // isClear 为 true 删除失效商品列表，否则删除选中商品
+          ctx.getters[isClear ? 'invalidList' : 'selectedList'].forEach(item => {
             ctx.commit('deleteCart', item.skuId)
           })
           resolve()
