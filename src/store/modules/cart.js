@@ -128,7 +128,16 @@ export default {
     batchDeleteCart(ctx, isClear) {
       return new Promise((resolve, reject) => {
         if (ctx.rootState.user.profile.token) {
-          // TODO 已登录
+          // 已登录
+          const ids = ctx.getters[isClear ? 'invalidList' : 'selectedList'].map(item => item.skuId)
+          deleteCart(ids)
+            .then(() => {
+              return findCart()
+            })
+            .then(data => {
+              ctx.commit('setCart', data.result)
+              resolve()
+            })
         } else {
           // 未登录
           // 找出选中的商品列表，遍历调用删除的mutations
