@@ -116,7 +116,23 @@ export default {
     updateCartSku(ctx, { oldSkuId, newSku }) {
       return new Promise((resolve, reject) => {
         if (ctx.rootState.user.profile.token) {
-          // TODO 已登录
+          // 已登录
+          // 1.找出旧的商品信息
+          // 2.删除旧的商品数据
+          // 3.原先商品数量+新skuId
+          // 4.添加新的商品
+          const oldGoods = ctx.state.list.find(item => item.skuId === oldSkuId)
+          deleteCart([oldGoods.skuId])
+            .then(() => {
+              return insertCart({ skuId: newSku.skuId, count: oldGoods.count })
+            })
+            .then(() => {
+              return findCart()
+            })
+            .then(data => {
+              ctx.commit('setCart', data.result)
+              resolve()
+            })
         } else {
           // 未登录
           // 1.找出旧的商品信息
