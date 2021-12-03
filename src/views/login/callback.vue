@@ -62,10 +62,13 @@ export default {
             // 1. 存储用户信息
             const { id, account, avatar, mobile, nickname, token } = data.result
             store.commit('user/setUser', { id, account, avatar, mobile, nickname, token })
-            // 2. 跳转到来源页或者首页
-            router.push(store.state.user.redirectUrl)
-            // 3. 成功提示
-            Message({ type: 'success', text: 'QQ登录成功' })
+            // 登录成功，合并购物车
+            store.dispatch('cart/mergeCart').then(() => {
+              // 2. 跳转到来源页或者首页
+              router.push(store.state.user.redirectUrl)
+              // 3. 成功提示
+              Message({ type: 'success', text: 'QQ登录成功' })
+            })
           })
           .catch(e => {
             // 登录失败：没有和小兔鲜绑定
