@@ -4,7 +4,8 @@ import {
   findCart,
   insertCart,
   deleteCart,
-  updateCart
+  updateCart,
+  checkAllCart
 } from '@/api/cart.js'
 // 购物车模块
 export default {
@@ -160,7 +161,16 @@ export default {
     checkAllCart(ctx, selected) {
       return new Promise((resolve, reject) => {
         if (ctx.rootState.user.profile.token) {
-          // TODO 已登录
+          // 已登录
+          const ids = ctx.getters.validList.map(item => item.skuId)
+          checkAllCart({ selected, ids })
+            .then(() => {
+              return findCart()
+            })
+            .then(data => {
+              ctx.commit('setCart', data.result)
+              resolve()
+            })
         } else {
           // 未登录
           ctx.getters.validList.forEach(goods => {
