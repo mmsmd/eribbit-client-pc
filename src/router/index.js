@@ -11,6 +11,8 @@ const Cart = () => import('@/views/cart/index.vue')
 const Login = () => import('@/views/login/index.vue')
 const LoginCallback = () => import('@/views/login/callback.vue')
 
+const Checkout = () => import('@/views/member/pay/checkout.vue')
+
 const routes = [
   //  一级路由布局容器
   {
@@ -21,7 +23,8 @@ const routes = [
       { path: '/category/:id', component: TopCategory },
       { path: '/category/sub/:id', component: SubCategory },
       { path: '/product/:id', component: Goods },
-      { path: '/cart', component: Cart }
+      { path: '/cart', component: Cart },
+      { path: '/member/checkout', component: Checkout }
     ]
   },
   { path: '/login', component: Login },
