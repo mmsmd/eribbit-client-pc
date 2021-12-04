@@ -6,27 +6,12 @@
         <XtxBreadItem to="/cart">购物车</XtxBreadItem>
         <XtxBreadItem>填写订单</XtxBreadItem>
       </XtxBread>
-      <div class="wrapper">
+      <div class="wrapper" v-if="order">
         <!-- 收货地址 -->
         <h3 class="box-title">收货地址</h3>
         <div class="box-body">
-          <div class="address">
-            <div class="text">
-              <!-- <div class="none">您需要先添加收货地址才可提交订单。</div> -->
-              <ul>
-                <li>
-                  <span>收<i />货<i />人：</span>朱超
-                </li>
-                <li><span>联系方式：</span>132****2222</li>
-                <li><span>收货地址：</span>海南省三亚市解放路108号物质大厦1003室</li>
-              </ul>
-              <a href="javascript:;">修改地址</a>
-            </div>
-            <div class="action">
-              <XtxButton class="btn">切换地址</XtxButton>
-              <XtxButton class="btn">添加地址</XtxButton>
-            </div>
-          </div>
+          <!-- 收货地址组件 -->
+          <CheckoutAddress :list="order.userAddresses"></CheckoutAddress>
         </div>
         <!-- 商品信息 -->
         <h3 class="box-title">商品信息</h3>
@@ -42,23 +27,20 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="i in 4" :key="i">
+              <tr v-for="item in order.goods" :key="item.skuId">
                 <td>
                   <a href="javascript:;" class="info">
-                    <img
-                      src="https://yanxuan-item.nosdn.127.net/cd9b2550cde8bdf98c9d083d807474ce.png"
-                      alt=""
-                    />
+                    <img :src="item.picture" alt="" />
                     <div class="right">
-                      <p>轻巧多用锅雪平锅 麦饭石不粘小奶锅煮锅</p>
-                      <p>颜色：白色 尺寸：10cm 产地：日本</p>
+                      <p>{{ item.name }}</p>
+                      <p>{{ item.attrsText }}</p>
                     </div>
                   </a>
                 </td>
-                <td>&yen;100.00</td>
-                <td>2</td>
-                <td>&yen;200.00</td>
-                <td>&yen;200.00</td>
+                <td>&yen;{{ item.price }}</td>
+                <td>{{ item.count }}</td>
+                <td>&yen;{{ item.totalPrice }}</td>
+                <td>&yen;{{ item.totalPayPrice }}</td>
               </tr>
             </tbody>
           </table>
@@ -83,19 +65,19 @@
           <div class="total">
             <dl>
               <dt>商品件数：</dt>
-              <dd>5件</dd>
+              <dd>{{ order.summary.goodsCount }}件</dd>
             </dl>
             <dl>
               <dt>商品总价：</dt>
-              <dd>¥5697.00</dd>
+              <dd>¥{{ order.summary.totalPrice }}</dd>
             </dl>
             <dl>
               <dt>运<i></i>费：</dt>
-              <dd>¥0.00</dd>
+              <dd>¥{{ order.summary.postFee }}</dd>
             </dl>
             <dl>
               <dt>应付总额：</dt>
-              <dd class="price">¥5697.00</dd>
+              <dd class="price">¥{{ order.summary.totalPayPrice }}</dd>
             </dl>
           </div>
         </div>
@@ -108,8 +90,21 @@
   </div>
 </template>
 <script>
+import { ref } from 'vue'
+import CheckoutAddress from './components/checkout-address.vue'
+import { createOrder } from '@/api/order.js'
 export default {
-  name: 'XtxPayCheckoutPage'
+  name: 'XtxPayCheckoutPage',
+  components: { CheckoutAddress },
+  setup() {
+    // 结算功能-生成订单-订单信息
+    const order = ref(null)
+    createOrder().then(data => {
+      order.value = data.result
+    })
+
+    return { order }
+  }
 }
 </script>
 <style scoped lang="less">
@@ -129,59 +124,7 @@ export default {
     }
   }
 }
-.address {
-  border: 1px solid #f5f5f5;
-  display: flex;
-  align-items: center;
-  .text {
-    flex: 1;
-    min-height: 90px;
-    display: flex;
-    align-items: center;
-    .none {
-      line-height: 90px;
-      color: #999;
-      text-align: center;
-      width: 100%;
-    }
-    > ul {
-      flex: 1;
-      padding: 20px;
-      li {
-        line-height: 30px;
-        span {
-          color: #999;
-          margin-right: 5px;
-          > i {
-            width: 0.5em;
-            display: inline-block;
-          }
-        }
-      }
-    }
-    > a {
-      color: @xtxColor;
-      width: 160px;
-      text-align: center;
-      height: 90px;
-      line-height: 90px;
-      border-right: 1px solid #f5f5f5;
-    }
-  }
-  .action {
-    width: 420px;
-    text-align: center;
-    .btn {
-      width: 140px;
-      height: 46px;
-      line-height: 44px;
-      font-size: 14px;
-      &:first-child {
-        margin-right: 10px;
-      }
-    }
-  }
-}
+
 .goods {
   width: 100%;
   border-collapse: collapse;
