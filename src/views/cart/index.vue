@@ -195,6 +195,10 @@ export default {
       if (store.getters['cart/selectedList'].length === 0) {
         return Message({ text: '至少选中一件商品' })
       }
+      // 如果登录直接跳转
+      if (store.state.user.profile.token) {
+        return router.push('/member/checkout')
+      }
       Confirm({ text: '下单结算需要登录，确定现在去登录吗？' })
         .then(() => {
           router.push('/member/checkout')
