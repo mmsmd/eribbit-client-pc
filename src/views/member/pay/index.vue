@@ -7,7 +7,7 @@
         <XtxBreadItem>支付订单</XtxBreadItem>
       </XtxBread>
       <!-- 付款信息 -->
-      <div class="pay-info">
+      <div class="pay-info" v-if="order">
         <span class="icon iconfont icon-queren2"></span>
         <div class="tip">
           <p>订单提交成功！请尽快完成支付。</p>
@@ -15,7 +15,7 @@
         </div>
         <div class="amount">
           <span>应付总额：</span>
-          <span>¥5673.00</span>
+          <span>¥{{ order.payMoney }}</span>
         </div>
       </div>
       <!-- 付款方式 -->
@@ -39,8 +39,21 @@
   </div>
 </template>
 <script>
+import { ref } from 'vue-demi'
+import { useRoute } from 'vue-router'
+import { findOrderDetail } from '@/api/order.js'
 export default {
-  name: 'XtxPayPage'
+  name: 'XtxPayPage',
+  setup() {
+    // 根据地址栏id获取订单数据
+    const route = useRoute()
+    const order = ref(null)
+    findOrderDetail(route.query.orderId).then(data => {
+      order.value = data.result
+    })
+
+    return { order }
+  }
 }
 </script>
 <style scoped lang="less">
