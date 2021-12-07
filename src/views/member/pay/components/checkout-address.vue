@@ -16,10 +16,10 @@
     </div>
     <div class="action">
       <XtxButton class="btn" @click="openDialog">切换地址</XtxButton>
-      <XtxButton class="btn">添加地址</XtxButton>
+      <XtxButton @click="openAddressEdit()" class="btn">添加地址</XtxButton>
     </div>
   </div>
-  <!-- 对话框组件 -->
+  <!-- 对话框组件 切换收货地址 -->
   <XtxDialog title="切换收货地址" v-model:visible="visibleDialog">
     <div
       @click="selectedAddress = item"
@@ -45,14 +45,16 @@
       <XtxButton @click="confirmAddressFn" type="primary">确认</XtxButton>
     </template>
   </XtxDialog>
+  <!-- 收货地址添加编辑组件 -->
+  <AddressEdit @on-success="successHandler" ref="addressEditCom"></AddressEdit>
 </template>
 <script>
 import { ref } from 'vue'
-import XtxDialog from '@/components/library/xtx-dialog.vue'
+import AddressEdit from './address-edit.vue'
 export default {
   name: 'CheckoutAddress',
   components: {
-    XtxDialog
+    AddressEdit
   },
   // 1.在拥有跟元素的组件中，触发自定义事件，有没有emits选项不影响
   // 2.如果组件渲染为代码片段，vue3.0需要在emits中声明所触发的自定义事件
@@ -103,7 +105,32 @@ export default {
       visibleDialog.value = true
     }
 
-    return { showAddress, visibleDialog, selectedAddress, confirmAddressFn, openDialog }
+    // 打开添加编辑收货地址组件
+    const addressEditCom = ref(null)
+    const openAddressEdit = () => {
+      addressEditCom.value.open()
+    }
+
+    const successHandler = formData => {
+      // 添加：向list中追加一条
+      // 当在修改formData的时候，数组中的数据也会修改，因为是同一个引用地址
+      // 当打开对话框需要清空之前输入信息会修改formData
+      // 克隆formData数据
+      const jsonStr = JSON.stringify(formData)
+      // eslint-disable-next-line vue/no-mutating-props
+      props.list.unshift(JSON.parse(jsonStr))
+    }
+
+    return {
+      showAddress,
+      visibleDialog,
+      selectedAddress,
+      confirmAddressFn,
+      openDialog,
+      openAddressEdit,
+      addressEditCom,
+      successHandler
+    }
   }
 }
 </script>
