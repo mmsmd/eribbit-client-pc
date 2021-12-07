@@ -18,3 +18,12 @@ export const createOrder = () => {
 export const addAddress = form => {
   return request('/member/address', 'post', form)
 }
+
+/**
+ * 修改收货地址
+ * @param {object} form - 参考接口文档
+ * @returns
+ */
+export const editAddress = form => {
+  return request(`/member/address/${form.id}`, 'put', form)
+}

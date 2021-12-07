@@ -1,5 +1,5 @@
 <template>
-  <XtxDialog title="添加收货地址" v-model:visible="visibleDialog">
+  <XtxDialog :title="`${formData.id ? '修改' : '添加'}收货地址`" v-model:visible="visibleDialog">
     <!-- 表单 -->
     <div class="address-edit">
       <div class="xtx-form">
@@ -61,7 +61,7 @@
 
 <script>
 import { reactive, ref } from 'vue'
-import { addAddress } from '@/api/order.js'
+import { addAddress, editAddress } from '@/api/order.js'
 import Messsage from '@/components/library/Message.js'
 export default {
   name: 'AddressEdit',
@@ -69,14 +69,21 @@ export default {
     const visibleDialog = ref(false)
 
     // 定义一open函数，作为打开对话框函数(组件实例拥有一个open函数)
-    const open = () => {
+    const open = address => {
       visibleDialog.value = true
-      // 添加 清空表单
-      for (const key in formData) {
-        if (key === 'isDefault') {
-          formData[key] = 1
-        } else {
-          formData[key] = null
+      if (address.id) {
+        // 修改 填充表单
+        for (const key in address) {
+          formData[key] = address[key]
+        }
+      } else {
+        // 添加 清空表单
+        for (const key in formData) {
+          if (key === 'isDefault') {
+            formData[key] = 1
+          } else {
+            formData[key] = null
+          }
         }
       }
     }
@@ -108,16 +115,29 @@ export default {
     const submit = () => {
       // 1.省略校验
       // 2.发送请求
-      addAddress(formData).then(data => {
-        // 设置id
-        formData.id = data.result.id
-        // 提示
-        Messsage({ type: 'success', text: '添加收货地址成功' })
-        // 关闭
-        visibleDialog.value = false
-        // 触发自定义事件
-        emit('on-success', formData)
-      })
+      if (formData.id) {
+        // 修改请求
+        editAddress(formData).then(data => {
+          // 提示
+          Messsage({ type: 'success', text: '修改收货地址成功' })
+          // 关闭
+          visibleDialog.value = false
+          // 触发自定义事件
+          emit('on-success', formData)
+        })
+      } else {
+        // 添加请求
+        addAddress(formData).then(data => {
+          // 设置id
+          formData.id = data.result.id
+          // 提示
+          Messsage({ type: 'success', text: '添加收货地址成功' })
+          // 关闭
+          visibleDialog.value = false
+          // 触发自定义事件
+          emit('on-success', formData)
+        })
+      }
     }
 
     return { visibleDialog, open, formData, changeCity, submit }

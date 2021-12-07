@@ -10,13 +10,16 @@
           <span>联系方式：</span
           >{{ showAddress.contact.replace(/^(\d{3})\d{4}(\d{4})/, '$1****$2') }}
         </li>
-        <li><span>收货地址：</span>{{ showAddress.fullLocation }}{{ showAddress.address }}</li>
+        <li>
+          <span>收货地址：</span>{{ showAddress.fullLocation.replace(/ /g, '')
+          }}{{ showAddress.address }}
+        </li>
       </ul>
-      <a v-if="showAddress" href="javascript:;">修改地址</a>
+      <a @click="openAddressEdit(showAddress)" v-if="showAddress" href="javascript:;">修改地址</a>
     </div>
     <div class="action">
       <XtxButton class="btn" @click="openDialog">切换地址</XtxButton>
-      <XtxButton @click="openAddressEdit()" class="btn">添加地址</XtxButton>
+      <XtxButton @click="openAddressEdit({})" class="btn">添加地址</XtxButton>
     </div>
   </div>
   <!-- 对话框组件 切换收货地址 -->
@@ -107,18 +110,28 @@ export default {
 
     // 打开添加编辑收货地址组件
     const addressEditCom = ref(null)
-    const openAddressEdit = () => {
-      addressEditCom.value.open()
+    const openAddressEdit = address => {
+      // 添加时 {} 修改 {数据}
+      addressEditCom.value.open(address)
     }
 
     const successHandler = formData => {
-      // 添加：向list中追加一条
-      // 当在修改formData的时候，数组中的数据也会修改，因为是同一个引用地址
-      // 当打开对话框需要清空之前输入信息会修改formData
-      // 克隆formData数据
-      const jsonStr = JSON.stringify(formData)
-      // eslint-disable-next-line vue/no-mutating-props
-      props.list.unshift(JSON.parse(jsonStr))
+      // 根据formData中的id，去当前地址列表中查找，有就是修改，否则是添加
+      const address = props.list.find(item => item.id === formData.id)
+      if (address) {
+        // 修改
+        for (const key in address) {
+          address[key] = formData[key]
+        }
+      } else {
+        // 添加：向list中追加一条
+        // 当在修改formData的时候，数组中的数据也会修改，因为是同一个引用地址
+        // 当打开对话框需要清空之前输入信息会修改formData
+        // 克隆formData数据
+        const jsonStr = JSON.stringify(formData)
+        // eslint-disable-next-line vue/no-mutating-props
+        props.list.unshift(JSON.parse(jsonStr))
+      }
     }
 
     return {
