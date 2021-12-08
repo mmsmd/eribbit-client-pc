@@ -28,7 +28,7 @@
         <div class="item">
           <p>支付平台</p>
           <a class="btn wx" href="javascript:;"></a>
-          <a class="btn alipay" href="javascript:;"></a>
+          <a class="btn alipay" @click="visibleDialog = true" :href="payUrl" target="_blank"></a>
         </div>
         <div class="item">
           <p>支付方式</p>
@@ -40,6 +40,18 @@
         </div>
       </div>
     </div>
+    <!-- 支付对话框 -->
+    <XtxDialog title="正在支付..." v-model:visible="visibleDialog">
+      <div class="pay-wait">
+        <img src="@/assets/images/load.gif" alt="" />
+        <div v-if="order">
+          <p>如果支付成功：</p>
+          <RouterLink :to="`/member/order/${$route.query.orderId}`">查看订单详情></RouterLink>
+          <p>如果支付失败：</p>
+          <RouterLink to="/">查看相关疑问></RouterLink>
+        </div>
+      </div>
+    </XtxDialog>
   </div>
 </template>
 <script>
@@ -47,6 +59,7 @@ import { ref } from 'vue-demi'
 import { useRoute } from 'vue-router'
 import { findOrderDetail } from '@/api/order.js'
 import { usePayTime } from '@/hooks/index.js'
+import { baseURL } from '@/utils/request.js'
 export default {
   name: 'XtxPayPage',
   setup() {
@@ -61,12 +74,32 @@ export default {
       }
     })
 
+    // 倒计时工具函数
     const { start, timeText } = usePayTime()
-    return { order, timeText }
+
+    // 支付地址
+    // const payUrl = '后台支付基准地址+支付页面地址+订单id+回跳地址'
+    const redirect = encodeURIComponent('http://www.corho.com:8080/#/pay/callback')
+    const payUrl = `${baseURL}pay/aliPay?orderId=${route.query.orderId}&redirect=${redirect}`
+
+    const visibleDialog = ref(false)
+
+    return { order, timeText, payUrl, visibleDialog }
   }
 }
 </script>
 <style scoped lang="less">
+.pay-wait {
+  display: flex;
+  justify-content: space-around;
+  p {
+    margin-top: 30px;
+    font-size: 14px;
+  }
+  a {
+    color: @xtxColor;
+  }
+}
 .pay-info {
   background: #fff;
   display: flex;
