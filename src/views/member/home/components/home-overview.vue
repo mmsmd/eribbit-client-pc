@@ -4,9 +4,9 @@
     <!-- 用户信息 -->
     <div class="user-meta">
       <div class="avatar">
-        <img src="http://zhoushugang.gitee.io/erabbit-client-pc-static/uploads/avatar_1.png" />
+        <img :src="$store.state.user.profile.avatar" />
       </div>
-      <h4>徐菲菲</h4>
+      <h4>{{ $store.state.user.profile.nickname || $store.state.user.profile.account }}</h4>
     </div>
     <div class="item">
       <a href="javascript:;">
