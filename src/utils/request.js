@@ -25,7 +25,6 @@ instance.interceptors.request.use(
     // 1.获取用户信息对象
     const { profile } = store.state.user
     // 2.判断是否有token
-    console.log(profile.token)
     if (profile.token) {
       // 3.设置token
       config.headers.Authorization = `Bearer ${profile.token}`

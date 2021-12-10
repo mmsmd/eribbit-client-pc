@@ -10,6 +10,10 @@ import UI from '@/components/library/index.js'
 import 'normalize.css'
 // 2.自己的重置样式
 import '@/assets/styles/common.less'
+
+// mockjs
+import '@/mock'
+
 createApp(App)
   .use(store)
   .use(router)
