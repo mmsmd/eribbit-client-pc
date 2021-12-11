@@ -1,5 +1,6 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import store from '@/store'
+import { h } from 'vue'
 
 const Layout = () => import('@/views/Layout.vue')
 const Home = () => import('@/views/home/index.vue')
@@ -18,6 +19,7 @@ const PayResult = () => import('@/views/member/pay/result.vue')
 const MemberLayout = () => import('@/views/member/Layout.vue')
 const MemberHome = () => import('@/views/member/home/index.vue')
 const MemberOrder = () => import('@/views/member/order/index.vue')
+const MemberDetail = () => import('@/views/member/order/detail.vue')
 
 const routes = [
   //  一级路由布局容器
@@ -38,7 +40,17 @@ const routes = [
         component: MemberLayout,
         children: [
           { path: '/member', component: MemberHome },
-          { path: '/member/order', component: MemberOrder }
+          // { path: '/member/order', component: MemberOrder },
+          // { path: '/member/order/:id', component: MemberDetail }
+          {
+            path: '/member/order',
+            // 创建一个RouterView容器形成嵌套关系
+            component: { render: () => h(<RouterView />) },
+            children: [
+              { path: '', component: MemberOrder },
+              { path: ':id', component: MemberDetail }
+            ]
+          }
         ]
       }
     ]
