@@ -1,8 +1,8 @@
 <template>
   <div class="member-order">
     MemberOrder
-    <RouterLink to="/member/order/1001"> 订单1</RouterLink>
-    <RouterLink to="/member/order/1002"> 订单2</RouterLink>
+    <!-- 体验jsx语法 -->
+    <XtxTabs></XtxTabs>
   </div>
 </template>
 
