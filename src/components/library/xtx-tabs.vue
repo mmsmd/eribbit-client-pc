@@ -1,6 +1,28 @@
 <script>
+import { useVModel } from '@vueuse/core'
+import { provide } from 'vue'
 export default {
   name: 'XtxTabs',
+  props: {
+    modelValue: {
+      type: [String, Number],
+      default: ''
+    }
+  },
+  setup(props, { emit }) {
+    // 接收v-model的值
+    const activeName = useVModel(props, 'modelValue', emit)
+    // 点击选项卡函数
+    const tabsClick = (name, index) => {
+      activeName.value = name
+      // 提供一个tab-click自定义事件
+      emit('tab-click', { name, index })
+    }
+    // 给panel传当前激活的name
+    provide('activeName', activeName)
+
+    return { activeName, tabsClick }
+  },
   render() {
     // 获取插槽内容
     const panels = this.$slots.default()
@@ -25,7 +47,15 @@ export default {
     const nav = (
       <nav>
         {dynamicPanels.map((item, i) => {
-          return <a href="javascript:;">{item.props.label}</a>
+          return (
+            <a
+              onClick={() => this.tabsClick(item.props.name, i)}
+              class={{ active: item.props.name === this.activeName }}
+              href="javascript:;"
+            >
+              {item.props.label}
+            </a>
+          )
         })}
       </nav>
     )
