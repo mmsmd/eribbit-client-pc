@@ -2,26 +2,59 @@
 export default {
   name: 'XtxTabs',
   render() {
-    // 返回的内容会进行渲染
-    // 1.在Babel帮助下，可以写vue中写jsx语法
-    // 2.数据的使用
-    const name = 'tom'
-    const title = 'tom 222'
-    // 3.事件如何绑定
-    const say = () => {
-      console.log('hi jsx')
-    }
-    // 4.定义一个jsx对象
-    const sub = [<sub>123</sub>, <sub>456</sub>]
+    // 获取插槽内容
+    const panels = this.$slots.default()
 
-    return (
-      <h1 title={title} onClick={say}>
-        {name}
-        {sub}
-      </h1>
+    // 动态panels组件集合
+    const dynamicPanels = []
+    panels.forEach(item => {
+      // 静态
+      if (item.type.name === 'XtxTabsPanel') {
+        dynamicPanels.push(item)
+      } else {
+        item.children.forEach(item => {
+          dynamicPanels.push(item)
+        })
+      }
+    })
+
+    // 需要在这里进行组织
+    // 1. tabs组件大容器
+    // 2. 选项卡的导航菜单结构
+    // 3. 内容容器
+    const nav = (
+      <nav>
+        {dynamicPanels.map((item, i) => {
+          return <a href="javascript:;">{item.props.label}</a>
+        })}
+      </nav>
     )
+
+    return <div class="xtx-tabs">{[nav, dynamicPanels]}</div>
   }
 }
 </script>
 
-<style scoped lang="less"></style>
+<style scoped lang="less">
+.xtx-tabs {
+  background: #fff;
+  > nav {
+    height: 60px;
+    line-height: 60px;
+    display: flex;
+    border-bottom: 1px solid #f5f5f5;
+    > a {
+      width: 110px;
+      border-right: 1px solid #f5f5f5;
+      text-align: center;
+      font-size: 16px;
+      &.active {
+        border-top: 2px solid @xtxColor;
+        height: 60px;
+        background: #fff;
+        line-height: 56px;
+      }
+    }
+  }
+}
+</style>
