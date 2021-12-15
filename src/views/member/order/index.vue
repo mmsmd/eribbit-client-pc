@@ -15,6 +15,7 @@
       <div v-if="loading" class="loading"></div>
       <div class="none" v-if="!loading && orderList.length === 0">暂无数据</div>
       <OrderItem
+        @on-delete="handlerDelete"
         @on-cancel="handlerCancel"
         v-for="item in orderList"
         :key="item.id"
@@ -38,8 +39,10 @@
 import { reactive, ref, watch } from 'vue'
 import { orderStatus } from '@/api/constance.js'
 import OrderItem from '@/views/member/order/components/order-item.vue'
-import { findOrderList } from '@/api/order.js'
+import { findOrderList, deleteOrder } from '@/api/order.js'
 import OrderCancel from '@/views/member/order/components/order-cancel.vue'
+import Confirm from '@/components/library/Confirm.js'
+import Message from '@/components/library/Message.js'
 export default {
   name: 'MemberOrder',
   components: {
@@ -59,16 +62,20 @@ export default {
     const loading = ref(false)
     const total = ref(0)
 
+    const getOrderList = () => {
+      loading.value = true
+      findOrderList(reqParams).then(data => {
+        orderList.value = data.result.items
+        total.value = data.result.counts
+        loading.value = false
+      })
+    }
+
     // 筛选条件变化重新加载
     watch(
       reqParams,
       () => {
-        loading.value = true
-        findOrderList(reqParams).then(data => {
-          orderList.value = data.result.items
-          total.value = data.result.counts
-          loading.value = false
-        })
+        getOrderList()
       },
       { immediate: true }
     )
@@ -79,6 +86,18 @@ export default {
       reqParams.orderState = index
     }
 
+    // 删除订单
+    const handlerDelete = order => {
+      Confirm({ text: '是否确认删除该订单？' })
+        .then(() => {
+          deleteOrder(order.id).then(() => {
+            Message({ type: 'success', text: '删除成功' })
+            getOrderList()
+          })
+        })
+        .catch(() => {})
+    }
+
     return {
       activeName,
       orderStatus,
@@ -87,7 +106,8 @@ export default {
       loading,
       total,
       reqParams,
-      ...useCancel()
+      ...useCancel(),
+      handlerDelete
     }
   }
 }

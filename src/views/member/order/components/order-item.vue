@@ -3,13 +3,19 @@
     <div class="order-list">
       <div class="order-item">
         <div class="head">
-          <span>下单时间：{{ order.creatTime }}</span>
+          <span>下单时间：{{ order.createTime }}</span>
           <span>订单编号：{{ order.id }}</span>
           <span class="down-time" v-if="order.orderState === 1">
             <i class="iconfont icon-down-time"></i>
             <b>付款截止：{{ timeText }}</b>
           </span>
-          <a v-if="[5, 6].includes(order.orederState)" href="javascript:;" class="del">删除</a>
+          <a
+            @click="$emit('on-delete', order)"
+            href="javascript:;"
+            class="del"
+            v-if="[5, 6].includes(order.orderState)"
+            >删除</a
+          >
         </div>
         <div class="body">
           <div class="column goods">
@@ -90,7 +96,7 @@ export default {
       default: () => ({})
     }
   },
-  emits: ['on-cancel'],
+  emits: ['on-cancel', 'on-delete'],
   setup(props) {
     const { start, timeText } = usePayTime()
     start(props.order.countdown)
