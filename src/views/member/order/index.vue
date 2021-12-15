@@ -17,6 +17,7 @@
       <OrderItem
         @on-delete="handlerDelete"
         @on-cancel="handlerCancel"
+        @on-confirm="handlerConfirm"
         v-for="item in orderList"
         :key="item.id"
         :order="item"
@@ -39,7 +40,7 @@
 import { reactive, ref, watch } from 'vue'
 import { orderStatus } from '@/api/constance.js'
 import OrderItem from '@/views/member/order/components/order-item.vue'
-import { findOrderList, deleteOrder } from '@/api/order.js'
+import { findOrderList, deleteOrder, confirmOrder } from '@/api/order.js'
 import OrderCancel from '@/views/member/order/components/order-cancel.vue'
 import Confirm from '@/components/library/Confirm.js'
 import Message from '@/components/library/Message.js'
@@ -107,7 +108,8 @@ export default {
       total,
       reqParams,
       ...useCancel(),
-      handlerDelete
+      handlerDelete,
+      ...useConfirm()
     }
   }
 }
@@ -122,6 +124,22 @@ const useCancel = () => {
   }
 
   return { handlerCancel, orderCancelCom }
+}
+
+// 确认收货逻辑
+const useConfirm = () => {
+  const handlerConfirm = order => {
+    Confirm({ text: '是否确认收货？确认后货款将打给卖家。' })
+      .then(() => {
+        confirmOrder(order.id).then(() => {
+          Message({ type: 'success', text: '确认收货成功' })
+          // 修改订单状态
+          order.orderState = 4
+        })
+      })
+      .catch(() => {})
+  }
+  return { handlerConfirm }
 }
 </script>
 
