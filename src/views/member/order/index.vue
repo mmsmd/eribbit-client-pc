@@ -14,7 +14,12 @@
     <div class="order-list">
       <div v-if="loading" class="loading"></div>
       <div class="none" v-if="!loading && orderList.length === 0">暂无数据</div>
-      <OrderItem v-for="item in orderList" :key="item.id" :order="item"></OrderItem>
+      <OrderItem
+        @on-cancel="handlerCancel"
+        v-for="item in orderList"
+        :key="item.id"
+        :order="item"
+      ></OrderItem>
     </div>
     <!-- 分页组件 -->
     <XtxPagination
@@ -24,6 +29,8 @@
       :total="total"
       @current-change="reqParams.page = $event"
     ></XtxPagination>
+    <!-- 取消原因组件 -->
+    <OrderCancel ref="orderCancelCom"></OrderCancel>
   </div>
 </template>
 
@@ -32,10 +39,12 @@ import { reactive, ref, watch } from 'vue'
 import { orderStatus } from '@/api/constance.js'
 import OrderItem from '@/views/member/order/components/order-item.vue'
 import { findOrderList } from '@/api/order.js'
+import OrderCancel from '@/views/member/order/components/order-cancel.vue'
 export default {
   name: 'MemberOrder',
   components: {
-    OrderItem
+    OrderItem,
+    OrderCancel
   },
   setup() {
     const activeName = ref('all')
@@ -70,8 +79,29 @@ export default {
       reqParams.orderState = index
     }
 
-    return { activeName, orderStatus, orderList, tabClick, loading, total, reqParams }
+    return {
+      activeName,
+      orderStatus,
+      orderList,
+      tabClick,
+      loading,
+      total,
+      reqParams,
+      ...useCancel()
+    }
   }
+}
+
+// 取消订单逻辑
+const useCancel = () => {
+  // 组件实例
+  const orderCancelCom = ref(null)
+  // 点击取消
+  const handlerCancel = order => {
+    orderCancelCom.value.open(order)
+  }
+
+  return { handlerCancel, orderCancelCom }
 }
 </script>
 
