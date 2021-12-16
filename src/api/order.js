@@ -84,3 +84,12 @@ export const deleteOrder = orderId => {
 export const confirmOrder = orderId => {
   return request(`/member/order/${orderId}/receipt`, 'put')
 }
+
+/**
+ * 查询物流
+ * @param {String} orderId - 订单ID
+ * @returns
+ */
+export const logisticsOrder = orderId => {
+  return request(`/member/order/${orderId}/logistics`, 'get')
+}

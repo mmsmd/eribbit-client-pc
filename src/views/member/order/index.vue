@@ -18,6 +18,7 @@
         @on-delete="handlerDelete"
         @on-cancel="handlerCancel"
         @on-confirm="handlerConfirm"
+        @on-logistics="handlerLogistics"
         v-for="item in orderList"
         :key="item.id"
         :order="item"
@@ -33,6 +34,8 @@
     ></XtxPagination>
     <!-- 取消原因组件 -->
     <OrderCancel ref="orderCancelCom"></OrderCancel>
+    <!-- 查看物流组件 -->
+    <OrderLogistics ref="orderLogisticsCom"></OrderLogistics>
   </div>
 </template>
 
@@ -42,13 +45,15 @@ import { orderStatus } from '@/api/constance.js'
 import OrderItem from '@/views/member/order/components/order-item.vue'
 import { findOrderList, deleteOrder, confirmOrder } from '@/api/order.js'
 import OrderCancel from '@/views/member/order/components/order-cancel.vue'
+import OrderLogistics from '@/views/member/order/components/order-logistics.vue'
 import Confirm from '@/components/library/Confirm.js'
 import Message from '@/components/library/Message.js'
 export default {
   name: 'MemberOrder',
   components: {
     OrderItem,
-    OrderCancel
+    OrderCancel,
+    OrderLogistics
   },
   setup() {
     const activeName = ref('all')
@@ -109,7 +114,8 @@ export default {
       reqParams,
       ...useCancel(),
       handlerDelete,
-      ...useConfirm()
+      ...useConfirm(),
+      ...useLogistics()
     }
   }
 }
@@ -140,6 +146,16 @@ const useConfirm = () => {
       .catch(() => {})
   }
   return { handlerConfirm }
+}
+
+// 查看物流逻辑
+const useLogistics = () => {
+  const orderLogisticsCom = ref(null)
+  const handlerLogistics = order => {
+    orderLogisticsCom.value.open(order)
+  }
+
+  return { handlerLogistics, orderLogisticsCom }
 }
 </script>
 
