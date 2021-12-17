@@ -121,7 +121,7 @@ export default {
 }
 
 // 取消订单逻辑
-const useCancel = () => {
+export const useCancel = () => {
   // 组件实例
   const orderCancelCom = ref(null)
   // 点击取消

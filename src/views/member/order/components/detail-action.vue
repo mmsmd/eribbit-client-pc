@@ -14,7 +14,7 @@
         <XtxButton @click="$router.push('/member/pay?id=' + order.id)" type="primary" size="small"
           >立即付款</XtxButton
         >
-        <XtxButton type="gray" size="small">取消订单</XtxButton>
+        <XtxButton @click="handlerCancel(order)" type="gray" size="small">取消订单</XtxButton>
       </template>
       <!-- 待发货 -->
       <template v-if="order.orderState === 2">
@@ -39,10 +39,15 @@
       </template>
       <!-- 已取消 -->
     </div>
+    <Teleport to="#model">
+      <OrderCancel ref="orderCancelCom"></OrderCancel>
+    </Teleport>
   </div>
 </template>
 <script>
 import { orderStatus } from '@/api/constance.js'
+import OrderCancel from '@/views/member/order/components/order-cancel.vue'
+import { useCancel } from '../index.vue'
 export default {
   name: 'OrderDetailAction',
   props: {
@@ -51,8 +56,11 @@ export default {
       default: () => ({})
     }
   },
+  components: {
+    OrderCancel
+  },
   setup() {
-    return { orderStatus }
+    return { orderStatus, ...useCancel() }
   }
 }
 </script>
