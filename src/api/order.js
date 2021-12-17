@@ -11,6 +11,14 @@ export const createOrder = () => {
 }
 
 /**
+ * 结算页面-生成订单-根据订单中商品-再次购买
+ * @returns
+ */
+export const repurchaseOrder = orderId => {
+  return request('/member/order/repurchase/' + orderId, 'get')
+}
+
+/**
  * 添加收货地址
  * @param {object} form - 参考接口文档
  * @returns
