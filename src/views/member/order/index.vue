@@ -133,7 +133,7 @@ export const useCancel = () => {
 }
 
 // 确认收货逻辑
-const useConfirm = () => {
+export const useConfirm = () => {
   const handlerConfirm = order => {
     Confirm({ text: '是否确认收货？确认后货款将打给卖家。' })
       .then(() => {
