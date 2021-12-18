@@ -98,13 +98,14 @@
     </Form>
     <div class="action">
       <a
-        href="https://graph.qq.com/oauth2.0/authorize?client_id=100556005&response_type=token&scope=all&redirect_uri=http%3A%2F%2Fwww.corho.com%3A8080%2F%23%2Flogin%2Fcallback"
+        href="https://graph.qq.com/oauth2.0/authorize?client_id=101984921&response_type=token&scope=all&redirect_uri=http%3A%2F%2Frabbit.mmsmd.top%2F%23%2Flogin%2Fcallback"
       >
         <img
           src="https://qzonestyle.gtimg.cn/qzone/vas/opensns/res/img/Connect_logo_7.png"
           alt=""
         />
       </a>
+
       <div class="url">
         <a href="javascript:;">忘记密码</a>
         <a href="javascript:;">免费注册</a>
@@ -122,6 +123,7 @@ import { userAccountLogin, userMobileLoginMsg, userMobileLogin } from '@/api/use
 import { useStore } from 'vuex'
 import { useRouter, useRoute } from 'vue-router'
 import { useIntervalFn } from '@vueuse/core'
+
 export default {
   name: 'LoginForm',
   components: { Form, Field },

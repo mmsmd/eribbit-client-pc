@@ -79,7 +79,7 @@ export default {
 
     // 支付地址
     // const payUrl = '后台支付基准地址+支付页面地址+订单id+回跳地址'
-    const redirect = encodeURIComponent('http://www.corho.com:8080/#/pay/callback')
+    const redirect = encodeURIComponent('http://rabbit.mmsmd.com/#/login/callback')
     const payUrl = `${baseURL}pay/aliPay?orderId=${route.query.orderId}&redirect=${redirect}`
 
     const visibleDialog = ref(false)
